@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Transport Fleet - Aaliya Trip Planners</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-premium navbar-expand-lg navbar-dark fixed-top py-0">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <img src="images/logo.png" alt="Aaliya Trip Planners" height="85">
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="common.html">Common Packages</a></li>
+                    <li class="nav-item"><a class="nav-link" href="couple.html">Couple Packages</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">Transports</a></li>
+                </ul>
+                <a href="index.html#contact"
+                    class="btn btn-outline-light ms-3 rounded-pill px-4 shadow-sm hover-lift">Contact Us</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="page-header"
+        style="background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800');">
+        <div class="container">
+            <h1 class="display-3 fw-bold">Our Fleet</h1>
+            <p class="lead mb-0">Comfortable and reliable transport for your journeys</p>
+        </div>
+    </header>
+
+    <div class="container py-5 section-overlap" style="min-height: 60vh;">
+        <div id="transports-list">
+            <div class="row g-4" id="transport-container">
+                <!-- Populated by JS -->
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transport Enquiry Modal -->
+    <div class="modal fade" id="transportEnquiryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Transport Booking</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="general-enquiry-form">
+                        <input type="hidden" name="enquiryType" value="TRANSPORT">
+                        <input type="hidden" name="packageId" id="modal-transport-id">
+                        <!-- abusing packageId field for transport ID -->
+                        <p class="fw-bold" id="modal-transport-name"></p>
+
+                        <div class="mb-3"><label class="form-label">Destination/Route</label><input type="text"
+                                class="form-control" name="destination" required></div>
+                        <div class="mb-3"><label class="form-label">Date</label><input type="date"
+                                class="form-control date-picker" name="travelDate" required></div>
+                        <div class="mb-3"><label class="form-label">Passengers</label><input type="number"
+                                class="form-control" name="peopleCount" required min="1"></div>
+                        <div class="mb-3"><label class="form-label">Name</label><input type="text" class="form-control"
+                                name="name" required></div>
+                        <div class="mb-3"><label class="form-label">Phone</label><input type="tel"
+                                class="form-control phone-input" name="phone" required maxlength="10"></div>
+                        <button type="submit" class="btn btn-primary w-100">Check Availability</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4 rounded-4">
+                <div class="mb-3 text-success"><i class="fas fa-check-circle fa-3x"></i></div>
+                <h3>Enquiry Sent!</h3>
+                <p>We will contact you shortly.</p>
+                <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center small text-white-50">
+            &copy; 2025 Aaliya Trip Planners. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

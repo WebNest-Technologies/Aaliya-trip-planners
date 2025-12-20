@@ -1,0 +1,305 @@
+:root {
+
+    --primary-color: #044cac;
+    --primary-dark: #0e1f26;
+    --secondary-color: #a5b0c6;
+    --light-bg: #f8f9fa;
+    --dark-text: #08171c;
+    --sidebar-width: 250px;
+}
+
+body {
+    background-color: var(--light-bg);
+    font-family: 'Outfit', sans-serif;
+    overflow-x: hidden;
+}
+
+
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    background: var(--primary-dark);
+    color: white;
+    transition: all 0.3s;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 30px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 15px 25px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-right: 4px solid transparent;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border-right-color: var(--primary-color);
+}
+
+.nav-link i {
+    width: 30px;
+    font-size: 1.2rem;
+}
+
+
+.card-stat {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    background: white;
+    transition: transform 0.2s;
+}
+
+.card-stat:hover {
+    transform: translateY(-2px);
+}
+
+.img-preview {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+
+.table-custom thead th {
+    background-color: #f1f5f9;
+    color: var(--primary-dark);
+    font-weight: 600;
+    border: none;
+}
+
+.table-custom tbody td {
+    vertical-align: middle;
+}
+
+
+@media (max-width: 992px) {
+
+
+    :root {
+        --sidebar-width: 0px;
+    }
+
+    body {
+        padding-bottom: 80px;
+
+    }
+
+
+    .sidebar {
+        transform: translateX(-100%);
+        display: none !important;
+    }
+
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+
+    .mobile-bottom-nav {
+        display: flex !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--primary-dark);
+        height: 70px;
+        z-index: 1050;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        padding: 0 10px;
+    }
+
+    .mobile-nav-item {
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.75rem;
+        transition: all 0.2s;
+    }
+
+    .mobile-nav-item i {
+        font-size: 1.4rem;
+        margin-bottom: 4px;
+    }
+
+    .mobile-nav-item.active {
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .mobile-nav-item.active i {
+        color: var(--primary-color);
+
+    }
+
+
+    .table-responsive {
+        border: 0;
+    }
+
+    /* Mobile Card Transformation for Tables */
+    .table-custom thead {
+        display: none;
+    }
+
+    .table-custom,
+    .table-custom tbody,
+    .table-custom tr,
+    .table-custom td {
+        display: block;
+        width: 100%;
+    }
+
+    .table-custom tr {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        margin-bottom: 24px;
+        padding: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+        /* Context for absolute positioning */
+        overflow: hidden;
+    }
+
+    .table-custom td {
+        padding: 5px 0;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        border: none;
+        position: relative;
+    }
+
+    /* 1. Status Badge - Top Right Absolute */
+    .table-custom td[data-label="Status"] {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: auto;
+        padding: 0;
+        margin: 0;
+        background: transparent !important;
+        justify-content: flex-end;
+    }
+
+    .table-custom td[data-label="Status"]::before {
+        display: none;
+        /* Hide Label */
+    }
+
+    /* 2. Customer Name - Prominent Title */
+    .table-custom td[data-label="Customer"] {
+        margin-top: 10px;
+        margin-bottom: 5px;
+        display: block;
+        text-align: left;
+    }
+
+    .table-custom td[data-label="Customer"]::before {
+        display: none;
+        /* Hide Label */
+    }
+
+
+
+    /* We need to target the inner text. admin.js structure: 
+       div > div.bg-light (icon) + div > div.fw-bold (name) */
+
+    /* 3. Received Date - Subtitle */
+    .table-custom td[data-label="Received"] {
+        font-size: 0.85rem;
+        color: #8898aa;
+        justify-content: flex-start;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #eee;
+        margin-bottom: 15px;
+    }
+
+    .table-custom td[data-label="Received"]::before {
+        display: none;
+        /* Hide Label */
+    }
+
+    /* 4. Other Fields (Type, etc) - Key Value Pairs */
+    .table-custom td[data-label="Type"] {
+        justify-content: space-between;
+        padding: 8px 0;
+    }
+
+    .table-custom td[data-label="Type"]::before {
+        content: attr(data-label);
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #8898aa;
+    }
+
+    /* 5. Action Button - Full Width Footer */
+    .table-custom td[data-label="Action"] {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
+        justify-content: center;
+    }
+
+    .table-custom td[data-label="Action"]::before {
+        display: none;
+    }
+
+    .table-custom td[data-label="Action"] button {
+        width: 100%;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 12px;
+    }
+
+
+    .page-header-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .text-muted.welcome-text {
+        font-size: 0.9rem;
+    }
+}
+
+
+.mobile-bottom-nav {
+    display: none;
+}
+
+
+.admin-card-img {
+    height: 120px;
+    width: 100%;
+    object-fit: cover;
+}
