@@ -354,20 +354,66 @@ function uploadImage(input, targetId, statusId) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
         const reader = new FileReader();
+        const statusEl = document.getElementById(statusId);
 
-        if (file.size > 2 * 1024 * 1024) { // 2MB limit
-            showToast('File is too large. Max 2MB.', 'error');
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit matching backend
+            showToast('File is too large. Max 5MB.', 'error');
             input.value = '';
             return;
         }
 
+        // Show preview immediately
         reader.onload = function (e) {
-            document.getElementById(targetId).value = e.target.result;
-            document.getElementById(statusId).innerText = 'Image selected: ' + file.name;
-            document.getElementById(statusId).className = 'text-success small';
-        };
+            // Note: We don't set the value yet, we wait for upload
+            // But if we want to show preview in an <img> tag, we might need to find it.
+            // However, the current code logic sets the HIDDEN input value for submission.
+            // We should NOT set the hidden input to Base64 anymore if we want to save the URL.
+            // But we might want to show a preview if there's an img tag. 
+            // The existing logic doesn't seem to update an <img> tag src directly here, 
+            // except for 'prof-img-preview' in HTML but that logic was 'onchange' calling uploadImage.
 
+            // Let's look at how it was used:
+            // document.getElementById(targetId).value = e.target.result;
+
+            // We'll process the upload now.
+            statusEl.innerText = 'Uploading...';
+            statusEl.className = 'text-info small';
+        };
         reader.readAsDataURL(file);
+
+        // Upload to Cloudinary
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch('/api/upload', {
+            method: 'POST',
+            body: formData, // Auto-sets Content-Type to multipart/form-data
+            // headers: getHeaders() // Optional: if you add auth later
+        })
+            .then(res => {
+                if (!res.ok) throw new Error('Upload failed');
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById(targetId).value = data.path; // Set the Cloudinary URL
+                statusEl.innerText = 'Image uploaded: ' + file.name;
+                statusEl.className = 'text-success small';
+
+                // If there is a preview image element associated, update it?
+                // The previous code didn't seem to update an img tag explicitely in this function, 
+                // usually the user sees the file name or the form submission reloads the page.
+                // Wait, for profile:
+                // onchange="uploadImage(this, 'prof-img', 'prof-img-status')"
+                // And: <img id="prof-img-preview" ...>
+                // The preview logic for profile seems missing in the original `uploadImage` function I saw.
+                // I'll stick to just setting the value and text.
+            })
+            .catch(err => {
+                console.error(err);
+                statusEl.innerText = 'Upload Error';
+                statusEl.className = 'text-danger small';
+                input.value = ''; // Clear input
+            });
     }
 }
 
