@@ -71,7 +71,7 @@ function showTab(tabId, event = null) {
 function checkAuth() {
     const token = localStorage.getItem(TOKEN_KEY);
     if (!token) {
-        window.location.href = '/admin/login.html';
+        window.location.href = 'login.html';
     } else {
         const adminName = localStorage.getItem('adminName');
         if (adminName) {
@@ -86,7 +86,7 @@ function logout() {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem('adminName');
         localStorage.removeItem('adminEmail');
-        window.location.href = '/admin/login.html';
+        window.location.href = 'login.html';
     });
 }
 
@@ -100,7 +100,7 @@ function getHeaders() {
 
 async function fetchDashboardData() {
     try {
-        const res = await fetch('/api/admin/dashboard-data', { headers: getHeaders() });
+        const res = await fetch(`${API_BASE_URL}/api/admin/dashboard-data`, { headers: getHeaders() });
         if (res.status === 401) return logout();
 
         const data = await res.json();
@@ -123,7 +123,7 @@ async function fetchDashboardData() {
 
 async function fetchEnquiries() {
     try {
-        const res = await fetch('/api/admin/enquiries', { headers: getHeaders() });
+        const res = await fetch(`${API_BASE_URL}/api/admin/enquiries`, { headers: getHeaders() });
         const data = await res.json();
         allEnquiries = data || [];
         renderEnquiries();
@@ -406,7 +406,7 @@ function uploadImage(input, targetId, statusId) {
         const formData = new FormData();
         formData.append('image', file);
 
-        fetch('/api/upload', {
+        fetch(`${API_BASE_URL}/api/upload`, {
             method: 'POST',
             body: formData, // Auto-sets Content-Type to multipart/form-data
             // headers: getHeaders() // Optional: if you add auth later
@@ -440,7 +440,7 @@ function uploadImage(input, targetId, statusId) {
 
 async function fetchAdmins() {
     try {
-        const res = await fetch('/api/admin/admins', { headers: getHeaders() });
+        const res = await fetch(`${API_BASE_URL}/api/admin/admins`, { headers: getHeaders() });
         if (res.ok) {
             const admins = await res.json();
             renderAdmins(admins);
@@ -483,7 +483,7 @@ document.getElementById('create-admin-form').addEventListener('submit', async (e
     }
 
     try {
-        const res = await fetch('/api/admin/create-admin', {
+        const res = await fetch(`${API_BASE_URL}/api/admin/create-admin`, {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify(Object.fromEntries(formData.entries()))
@@ -505,7 +505,7 @@ document.getElementById('create-admin-form').addEventListener('submit', async (e
 function deleteAdmin(id) {
     showConfirmation('Delete this admin user?', async () => {
         try {
-            const res = await fetch(`/api/admin/admins/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/admins/${id}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             });
@@ -562,7 +562,7 @@ document.getElementById('package-form').addEventListener('submit', async (e) => 
         }
 
         const method = id ? 'PUT' : 'POST';
-        const url = id ? `/api/admin/packages/${id}` : '/api/admin/packages';
+        const url = id ? `${API_BASE_URL}/api/admin/packages/${id}` : `${API_BASE_URL}/api/admin/packages`;
 
         const res = await fetch(url, {
             method: method,
@@ -586,7 +586,7 @@ document.getElementById('package-form').addEventListener('submit', async (e) => 
 function deletePackage(id) {
     showConfirmation('Are you sure you want to delete this package?', async () => {
         try {
-            const res = await fetch(`/api/admin/packages/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/packages/${id}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             });
@@ -716,7 +716,7 @@ function renderEnquiries(enquiriesToRender = null) {
 
 async function updateEnquiry(id, status) {
     try {
-        const res = await fetch(`/api/admin/enquiries/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/admin/enquiries/${id}`, {
             method: 'PUT',
             headers: getHeaders(),
             body: JSON.stringify({ status })

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('/api/public/data');
+        const response = await fetch(`${API_BASE_URL}/api/public/data`);
         const data = await response.json();
 
         if (response.ok) {
@@ -614,7 +614,7 @@ function setupEnquiryForms() {
             btn.disabled = true;
 
             try {
-                const res = await fetch('/api/public/enquiry', {
+                const res = await fetch(`${API_BASE_URL}/api/public/enquiry`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
