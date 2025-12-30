@@ -875,7 +875,7 @@ document.getElementById('transport-form').addEventListener('submit', async (e) =
 
     try {
         const method = id ? 'PUT' : 'POST';
-        const url = id ? `/api/admin/transports/${id}` : '/api/admin/transports';
+        const url = id ? `${API_BASE_URL}/api/admin/transports/${id}` : `${API_BASE_URL}/api/admin/transports`;
 
         const res = await fetch(url, {
             method: method,
@@ -898,7 +898,7 @@ document.getElementById('transport-form').addEventListener('submit', async (e) =
 function deleteTransport(id) {
     showConfirmation('Delete this vehicle?', async () => {
         try {
-            const res = await fetch(`/api/admin/transports/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/transports/${id}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             });
@@ -1046,7 +1046,7 @@ async function handleNewGalleryFiles(input) {
             loadingDiv.innerHTML = '<div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center"><i class="fas fa-spinner fa-spin text-muted"></i></div>';
             previewContainer.appendChild(loadingDiv);
 
-            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const res = await fetch(`${API_BASE_URL}/api/upload`, { method: 'POST', body: formData });
             if (!res.ok) throw new Error('Upload failed');
 
             const data = await res.json();
@@ -1099,7 +1099,7 @@ document.getElementById('new-gallery-form').addEventListener('submit', async (e)
     };
 
     try {
-        const res = await fetch('/api/admin/gallery', {
+        const res = await fetch(`${API_BASE_URL}/api/admin/gallery`, {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify(payload)
@@ -1125,7 +1125,7 @@ document.getElementById('new-gallery-form').addEventListener('submit', async (e)
 function deleteGalleryItem(id) {
     showConfirmation('Are you sure you want to remove this memory?', async () => {
         try {
-            const res = await fetch(`/api/admin/gallery/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/gallery/${id}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             });
@@ -1172,7 +1172,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     const payload = Object.fromEntries(formData.entries());
 
     try {
-        const res = await fetch('/api/admin/profile', {
+        const res = await fetch(`${API_BASE_URL}/api/admin/profile`, {
             method: 'PUT',
             headers: getHeaders(),
             body: JSON.stringify(payload)
