@@ -856,6 +856,11 @@ function openTransportModal(transId = null) {
         document.getElementById('trans-cap').value = trans.capacity;
         document.getElementById('trans-price').value = trans.pricePerKm;
 
+        document.getElementById('trans-rent').value = trans.dailyRent || 0;
+        document.getElementById('trans-ac').value = trans.acCharges || 0;
+        document.getElementById('trans-hills').value = trans.hillsCharges || 0;
+        document.getElementById('trans-info').value = trans.additionalInfo || '';
+
         if (trans.image) {
             document.getElementById('trans-img').value = trans.image;
             document.getElementById('trans-img-file-status').innerText = 'Current image loaded';
@@ -871,7 +876,20 @@ document.getElementById('transport-form').addEventListener('submit', async (e) =
     e.preventDefault();
     const formData = new FormData(e.target);
     const id = formData.get('id');
-    const payload = Object.fromEntries(formData.entries());
+
+    // Explicitly construct payload with correct types
+    const payload = {
+        name: formData.get('name'),
+        capacity: Number(formData.get('capacity')), // Force Number
+        pricePerKm: Number(formData.get('pricePerKm')),
+        dailyRent: Number(formData.get('dailyRent') || 0),
+        acCharges: Number(formData.get('acCharges') || 0),
+        hillsCharges: Number(formData.get('hillsCharges') || 0),
+        additionalInfo: formData.get('additionalInfo') || '',
+        image: formData.get('image') || ''
+    };
+
+    console.log('Sending Vehicle Payload:', payload);
 
     try {
         const method = id ? 'PUT' : 'POST';
@@ -886,17 +904,20 @@ document.getElementById('transport-form').addEventListener('submit', async (e) =
         if (res.ok) {
             window.transModal.hide();
             fetchDashboardData();
-            showToast('Vehicle Saved Successfully!', 'success');
+            showToast(id ? 'Vehicle Updated Successfully!' : 'Vehicle Created Successfully!', 'success');
         } else {
-            showToast('Operation failed', 'error');
+            const errData = await res.json();
+            console.error('Server Error:', errData);
+            showToast(errData.message || 'Operation failed: Check console for details', 'error');
         }
     } catch (err) {
+        console.error('Network/Logic Error:', err);
         showToast('Error: ' + err.message, 'error');
     }
 });
 
 function deleteTransport(id) {
-    showConfirmation('Delete this vehicle?', async () => {
+    showConfirmation('Are you sure you want to delete this vehicle?', async () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/admin/transports/${id}`, {
                 method: 'DELETE',
@@ -906,10 +927,11 @@ function deleteTransport(id) {
                 fetchDashboardData();
                 showToast('Vehicle deleted successfully', 'success');
             } else {
-                showToast('Failed to delete vehicle', 'error');
+                const errData = await res.json();
+                showToast(errData.message || 'Failed to delete vehicle', 'error');
             }
         } catch (err) {
-            // Error handling silently
+            showToast('Error: ' + err.message, 'error');
         }
     });
 }

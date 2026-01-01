@@ -1,1 +1,1 @@
-const API_BASE_URL = 'https://aaliya-trip-planners.onrender.com';
+const API_BASE_URL = 'http://localhost:5000';

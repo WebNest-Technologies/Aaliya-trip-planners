@@ -121,6 +121,49 @@
         </div>
     </div>
 
+    <!-- Transport Modal Added -->
+    <div class="modal fade" id="transportEnquiryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Transport Booking</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="general-enquiry-form">
+                        <input type="hidden" name="enquiryType" value="TRANSPORT">
+                        <input type="hidden" name="packageId" id="modal-transport-id">
+                        <p class="fw-bold" id="modal-transport-name"></p>
+
+                        <div class="mb-3">
+                            <label class="form-label">Pickup Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="pickupLocation"
+                                placeholder="Enter Pickup City" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Drop Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="dropLocation" placeholder="Enter Drop City"
+                                required>
+                        </div>
+                        <div class="alert alert-warning small mb-3">
+                            <i class="fas fa-info-circle me-2"></i>Note: Pickup & Drop available only from Dindigul and
+                            Madurai.
+                        </div>
+                        <div class="mb-3"><label class="form-label">Date</label><input type="date"
+                                class="form-control date-picker" name="travelDate" required></div>
+                        <div class="mb-3"><label class="form-label">Passengers</label><input type="number"
+                                class="form-control" name="peopleCount" required min="1"></div>
+                        <div class="mb-3"><label class="form-label">Name</label><input type="text" class="form-control"
+                                name="name" required></div>
+                        <div class="mb-3"><label class="form-label">Phone</label><input type="tel"
+                                class="form-control phone-input" name="phone" required maxlength="10"></div>
+                        <button type="submit" class="btn btn-primary w-100">Check Availability</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="successModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-center p-4 rounded-4">
@@ -154,53 +197,142 @@
             try {
                 const res = await fetch(`${API_BASE_URL}/api/public/data`);
                 const data = await res.json();
+                const type = urlParams.get('type');
 
-                const pkg = data.packages.find(p => p._id === id);
+                if (type === 'transport') {
+                    // TRANSPORT DETAIL VIEW
+                    const vehicle = data.transports.find(t => t._id === id);
+                    if (vehicle) {
+                        document.getElementById('loading-spinner').style.display = 'none';
+                        document.getElementById('details-content').style.display = 'block';
 
-                if (pkg) {
-                    document.getElementById('loading-spinner').style.display = 'none';
-                    document.getElementById('details-content').style.display = 'block';
+                        document.title = `${vehicle.name} - Details`;
+                        document.getElementById('pkg-title').innerText = vehicle.name;
+                        document.getElementById('pkg-destination').innerHTML = `<i class="fas fa-users me-2"></i> ${vehicle.capacity} Seater`;
 
-                    document.title = `${pkg.title} - Details`;
-                    document.getElementById('pkg-title').innerText = pkg.title;
-                    document.getElementById('pkg-destination').innerText = pkg.destination || pkg.title;
-                    document.getElementById('pkg-duration').innerText = pkg.duration || 'Flexible';
-                    document.getElementById('pkg-price').innerText = pkg.startingPrice ? `₹${pkg.startingPrice}` : 'Best Price';
-                    document.getElementById('pkg-itinerary').innerText = pkg.itinerary || 'Contact us for itinerary details.';
+                        document.getElementById('pkg-duration').parentElement.innerHTML = `<i class="fas fa-calendar-day me-2 text-warning"></i><span>₹${vehicle.dailyRent || 0}/Day</span>`;
+                        document.getElementById('pkg-price').parentElement.style.display = 'none'; // Hide Price tag in header
 
-                    if (pkg.images && pkg.images.length > 0) {
-                        document.getElementById('pkg-header-bg').style.backgroundImage = `url('${pkg.images[0]}')`;
-                    }
+                        if (vehicle.image) {
+                            document.getElementById('pkg-header-bg').style.backgroundImage = `url('${vehicle.image}')`;
+                        }
 
-                    const inclList = document.getElementById('pkg-inclusions');
-                    if (pkg.inclusions) {
-                        const items = pkg.inclusions.split('\n');
-                        items.forEach(item => {
-                            if (item.trim()) inclList.innerHTML += `<li class="mb-2"><i class="fas fa-check text-success me-2"></i>${item}</li>`;
-                        });
+                        // Construct Pricing Table
+                        let pricingHtml = `
+                            <div class="table-responsive">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr class="border-bottom">
+                                            <td class="py-3 text-muted">Daily Rent</td>
+                                            <td class="py-3 fw-bold text-end">₹${vehicle.dailyRent || 0}</td>
+                                        </tr>
+                                        <tr class="border-bottom">
+                                            <td class="py-3 text-muted">Per Kilometer</td>
+                                            <td class="py-3 fw-bold text-end">₹${vehicle.pricePerKm}</td>
+                                        </tr>
+                                        <tr class="border-bottom">
+                                            <td class="py-3 text-muted">A/C Charges</td>
+                                            <td class="py-3 fw-bold text-end">₹${vehicle.acCharges || 0}</td>
+                                        </tr>
+                                        <tr class="border-bottom">
+                                            <td class="py-3 text-muted">Hills Charge</td>
+                                            <td class="py-3 fw-bold text-end">₹${vehicle.hillsCharges || 0}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+
+                        // Additional Info Block
+                        if (vehicle.additionalInfo) {
+                            pricingHtml += `
+                                <div class="mt-4 p-3 bg-light rounded-3 border">
+                                    <h6 class="fw-bold text-dark mb-2">Additional Charges & Info</h6>
+                                    <p class="mb-0 text-muted small" style="white-space: pre-line;">${vehicle.additionalInfo}</p>
+                                </div>
+                            `;
+                        }
+
+                        document.getElementById('pkg-itinerary').innerHTML = pricingHtml;
+                        document.querySelector('.card h4').innerText = "Pricing Details";
+                        document.querySelector('.card h5').style.display = 'none'; // Hide Itinerary Title
+
+                        // Adjust Sidebar
+                        document.getElementById('pkg-inclusions').parentElement.style.display = 'none'; // Hide Inclusions/Exclusions completely
+
+                        // Move Book Button to main area or reuse sidebar? 
+                        // Let's modify the sidebar to just show "Book Now" for transport
+                        const sidebar = document.querySelector('.col-lg-4 .card');
+                        sidebar.innerHTML = `
+                            <h5 class="fw-bold mb-3">Book This Vehicle</h5>
+                            <p class="text-muted small mb-4">Contact us to check availability and book this vehicle for your trip.</p>
+                            <div class="d-grid gap-2">
+                                <button id="book-btn" class="btn btn-primary rounded-pill py-3 fw-bold shadow">Book Now</button>
+                                <a href="https://wa.me/918526630786?text=I am interested in booking ${vehicle.name}" target="_blank"
+                                    class="btn btn-outline-success rounded-pill py-2"><i
+                                        class="fab fa-whatsapp me-2"></i>Enquire on WhatsApp</a>
+                            </div>
+                        `;
+
+                        document.getElementById('book-btn').onclick = () => {
+                            openTransportModal(vehicle._id, vehicle.name);
+                        };
+
                     } else {
-                        inclList.innerHTML = '<li class="text-muted">Standard inclusions apply.</li>';
+                        alert('Vehicle not found.');
+                        window.location.href = 'vehicles.html';
                     }
-
-                    const exclList = document.getElementById('pkg-exclusions');
-                    if (pkg.exclusions) {
-                        const items = pkg.exclusions.split('\n');
-                        items.forEach(item => {
-                            if (item.trim()) exclList.innerHTML += `<li><i class="fas fa-times me-2"></i>${item}</li>`;
-                        });
-                    }
-
-                    document.getElementById('book-btn').onclick = () => {
-                        openPackageModal(pkg._id, pkg.title, pkg.packageType, pkg.destination);
-                    };
 
                 } else {
-                    alert('Package not found.');
-                    window.location.href = 'index.html';
+                    // PACKAGE DETAIL VIEW (Existing Logic)
+                    const pkg = data.packages.find(p => p._id === id);
+
+                    if (pkg) {
+                        document.getElementById('loading-spinner').style.display = 'none';
+                        document.getElementById('details-content').style.display = 'block';
+
+                        document.title = `${pkg.title} - Details`;
+                        document.getElementById('pkg-title').innerText = pkg.title;
+                        document.getElementById('pkg-destination').innerText = pkg.destination || pkg.title;
+                        document.getElementById('pkg-duration').innerText = pkg.duration || 'Flexible';
+                        document.getElementById('pkg-price').innerText = pkg.startingPrice ? `₹${pkg.startingPrice}` : 'Best Price';
+                        document.getElementById('pkg-itinerary').innerText = pkg.itinerary || 'Contact us for itinerary details.';
+
+                        if (pkg.images && pkg.images.length > 0) {
+                            document.getElementById('pkg-header-bg').style.backgroundImage = `url('${pkg.images[0]}')`;
+                        }
+
+                        const inclList = document.getElementById('pkg-inclusions');
+                        if (pkg.inclusions) {
+                            const items = pkg.inclusions.split('\\n');
+                            items.forEach(item => {
+                                if (item.trim()) inclList.innerHTML += `<li class="mb-2"><i class="fas fa-check text-success me-2"></i>${item}</li>`;
+                            });
+                        } else {
+                            inclList.innerHTML = '<li class="text-muted">Standard inclusions apply.</li>';
+                        }
+
+                        const exclList = document.getElementById('pkg-exclusions');
+                        if (pkg.exclusions) {
+                            const items = pkg.exclusions.split('\\n');
+                            items.forEach(item => {
+                                if (item.trim()) exclList.innerHTML += `<li><i class="fas fa-times me-2"></i>${item}</li>`;
+                            });
+                        }
+
+                        document.getElementById('book-btn').onclick = () => {
+                            openPackageModal(pkg._id, pkg.title, pkg.packageType, pkg.destination);
+                        };
+
+                    } else {
+                        alert('Package not found.');
+                        window.location.href = 'index.html';
+                    }
                 }
 
             } catch (e) {
                 // Error handling silently
+                console.error(e);
             }
         });
     </script>

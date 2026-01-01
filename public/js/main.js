@@ -196,7 +196,7 @@ function createPackageCard(pkg) {
                     </div>
 
                     <div class="listing-card-actions">
-                        <button class="btn btn-outline-secondary rounded-pill btn-sm fw-bold" onclick="window.location.href='details?id=${pkg._id}'">
+                        <button class="btn btn-outline-secondary rounded-pill btn-sm fw-bold" onclick="window.location.href='details.html?id=${pkg._id}'">
                             Details
                         </button>
                         <button class="btn btn-primary rounded-pill btn-sm fw-bold shadow-sm" onclick="openPackageModal('${pkg._id}', '${pkg.title}', '${pkg.packageType}', '${pkg.destination || pkg.title}')">
@@ -231,12 +231,15 @@ function renderTransports(transports) {
                     <div class="listing-card-body p-3 text-center">
                         <h6 class="fw-bold mb-2 text-dark">${t.name}</h6>
                         <div class="mb-3">
-                            <span class="price-tag" style="font-size: 1.1rem;">₹${t.pricePerKm || 0}</span>
-                            <span class="text-muted small">/ km</span>
+                            <span class="price-tag" style="font-size: 1.1rem;">₹${t.dailyRent || 0}</span>
+                            <span class="text-muted small">/ Day</span>
                         </div>
-                        <button class="btn btn-primary rounded-pill btn-sm w-100 shadow-sm fw-bold" onclick="openTransportModal('${t._id}', '${t.name}')">
-                            Book This Car
-                        </button>
+                            <button class="btn btn-outline-secondary rounded-pill btn-sm w-100 mb-2 fw-bold" onclick="window.location.href='details.html?id=${t._id}&type=transport'">
+                                View Details
+                            </button>
+                            <button class="btn btn-primary rounded-pill btn-sm w-100 shadow-sm fw-bold" onclick="openTransportModal('${t._id}', '${t.name}')">
+                                Book Now
+                            </button>
                     </div>
                 </div>
             </div>

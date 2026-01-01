@@ -35,17 +35,27 @@ const deletePackage = async (req, res) => {
 
 const createTransport = async (req, res) => {
     try {
+        console.log("Create Transport Body:", req.body);
         const transport = new Transport(req.body);
         const savedTransport = await transport.save();
         res.status(201).json(savedTransport);
     } catch (error) {
+        console.error("Create Transport Error:", error);
         res.status(400).json({ message: error.message });
     }
 };
 
 const updateTransport = async (req, res) => {
     try {
+        console.log("Update Transport ID:", req.params.id);
+        console.log("Update Transport Body:", req.body);
+
+        // DEBUG: Check if schema has the new fields
+        console.log("Schema Paths:", Object.keys(Transport.schema.paths));
+
         const updatedTransport = await Transport.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        console.log("Updated Document from DB:", updatedTransport);
+
         res.json(updatedTransport);
     } catch (error) {
         res.status(400).json({ message: error.message });
